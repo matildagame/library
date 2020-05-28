@@ -5,6 +5,8 @@
  */
 package es.ugr.tstc.matilda.matildalib;
 
+import java.util.Random;
+
 /**
  *
  * @author matilda
@@ -27,6 +29,9 @@ public class MatildaLibClientLauncher {
      public static void main(String[] args){
         int libPort=9998;
         
+        if(args.length>=1){
+            libPort=Integer.parseInt(args[0]);
+        }
         // Let's create the server
         new MatildaLibClientLauncher(libPort);
     }

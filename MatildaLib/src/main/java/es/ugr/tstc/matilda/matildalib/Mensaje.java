@@ -9,6 +9,8 @@ import es.ugr.tstc.matilda.cobertura.CharacterDescription;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +29,8 @@ public class Mensaje {
     static final String RegisterString = "REGISTER";
     static final String RegisterReplyString = "REGISTER_REPLY";
     static final String PlayersListString = "PLAYER_LIST";
-
+    static final String StartMatchString="START_MATCH";
+    
     private String username;
     private String room;
     private String mesh;
@@ -37,22 +40,16 @@ public class Mensaje {
     private int game_server_port;
     private String playerID;
     private List<CharacterDescription> playersList;
+    private Map<String, float[]> spawnPlayerList;
+
+ 
 
     enum CODE {
         OK, ERR
     };
     CODE code;
 
-    void buildRegisterReply(String playerID) {
-        this.playerID = playerID;
-        this.tipo = MessageType.REGISTER_REPLY;
-        this.code = CODE.OK;
-    }
-
-    void buildPlayersListMessage(List<CharacterDescription> playersList) {
-        tipo = MessageType.PLAYERS_LIST_UPDATE;
-        this.playersList = playersList;
-    }
+   
 
     enum ERROR {
         noError
@@ -122,6 +119,33 @@ public class Mensaje {
 
         return error;
     }
+    
+    ERROR buildRegisterReply(String playerID) {
+        ERROR error = ERROR.noError;
+        
+        this.playerID = playerID;
+        this.tipo = MessageType.REGISTER_REPLY;
+        this.code = CODE.OK;
+        
+              return error;
+    }
+
+    ERROR buildPlayersListMessage(List<CharacterDescription> playersList) {
+        ERROR error = ERROR.noError;
+        
+        tipo = MessageType.PLAYERS_LIST_UPDATE;
+        this.playersList = playersList;
+        
+              return error;
+    }
+    
+    ERROR buildStartMatchMessage(Map<String, float[]> spawnPlayersList) {
+        ERROR error = ERROR.noError;
+        
+        tipo=MessageType.START_MATCH;
+        this.spawnPlayerList=spawnPlayersList;
+          return error;    
+    }
 
     String serialize() {
         String linea = "";
@@ -133,9 +157,36 @@ public class Mensaje {
             case PLAYERS_LIST_UPDATE:
                 linea = serializePlayersListUpdate(playersList);
                 break;
+            case START_MATCH:
+                linea=serializeSpawnPlayersList(spawnPlayerList);
         }
 
         return linea;
+    }
+    
+   private String serializeSpawnPlayersList(Map<String, float[]> spawnPlayerList) {
+       String linea="";
+       
+       
+        Set<String> playersID = spawnPlayerList.keySet();
+        
+        int i=0;
+        for(String playerID:playersID){
+           float[] coordenada = spawnPlayerList.get(playerID);
+            linea=linea+playerID+DEL2+coordenada[0]+DEL2+coordenada[1]+DEL2+coordenada[2];
+                    i++;
+                    if(i<playersID.size()){
+                        linea=linea+DEL;
+                    }
+        }
+       
+       linea=StartMatchString+SP+ linea+ENDOL; //serializePositionDescription(spawnPlayerList);
+        
+       return linea;
+   }
+
+    private String serializePositionDescription(float[] get) {
+        return "";
     }
 
     private String serializePlayersListUpdate(List<CharacterDescription> playersList) {

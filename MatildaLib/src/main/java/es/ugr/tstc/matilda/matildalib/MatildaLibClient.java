@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,6 +52,12 @@ public class MatildaLibClient {
     void evPlayerList(List<CharacterDescription> playersList) {
         Mensaje mensaje=new Mensaje();
         mensaje.buildPlayersListMessage(playersList);
+        enviarMensaje(mensaje.serialize());
+    }
+
+    void evStartMatch(Map<String, float[]> spawnPlayersList) {
+        Mensaje mensaje=new Mensaje();
+        mensaje.buildStartMatchMessage(spawnPlayersList);
         enviarMensaje(mensaje.serialize());
     }
     

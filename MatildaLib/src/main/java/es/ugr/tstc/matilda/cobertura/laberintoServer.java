@@ -19,7 +19,7 @@ public class laberintoServer {
 
     // Hay que poner otra manera de decir que comience el juego... ¿Otro mensaje?
     // De momento, arranca cuando se llega a 3 jugadores esperando en la partida:
-    int playersToStart=3;
+    int playersToStart=2;
     //////////////////////////////////
     /////////////////////////////////
     

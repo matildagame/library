@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,12 +23,10 @@ import java.util.logging.Logger;
  */
 public class LaberintoGameManager {
 
-   
+
 
    
-    
             enum ESTADOS {inicial, esperandoRegisterRequest, registrado};
-            
             
     private MatildaLibClient matildaLib;
     private Socket socket;
@@ -98,6 +97,9 @@ public class LaberintoGameManager {
                                  manager.evPlayerList(mensaje.getPlayersList());
                                  
                                  break;
+                             case mStartMatch:
+                                 manager.evStartMatch(mensaje.getSpawnPlayersList());
+                                 break;
                          }
                          break;
                      case esperandoRegisterRequest:
@@ -158,5 +160,8 @@ public class LaberintoGameManager {
          }
      }
 
+         private void evStartMatch(Map<String, float[]> spawnPlayersList) {
+        matildaLib.evStartMatch(spawnPlayersList);
+    }
     
 }

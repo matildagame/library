@@ -5,12 +5,14 @@
  */
 package es.ugr.tstc.matilda.matildalib;
 
+import es.ugr.tstc.matilda.cobertura.CharacterDescription;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,7 +26,6 @@ public class MatildaLibClient {
 
            BufferedReader in=null;
         PrintWriter out=null;
-
         LaberintoGameManager laberintoGameManager=null;
         
 
@@ -39,12 +40,18 @@ public class MatildaLibClient {
 
     public void evJoinResponseOk(String playerID) {
         Mensaje mensaje=new Mensaje();
-        mensaje.buildRegisterReply(playerID);
+        mensaje.buildRegisterReplyMessage(playerID);
         enviarMensaje(mensaje.serialize());
     }
 
     public void evJoinResponseErr() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    void evPlayerList(List<CharacterDescription> playersList) {
+        Mensaje mensaje=new Mensaje();
+        mensaje.buildPlayersListMessage(playersList);
+        enviarMensaje(mensaje.serialize());
     }
     
     enum Estados {inicial, inicializado,registrado, esperandoRespuestaRegistro};
@@ -183,4 +190,19 @@ public class MatildaLibClient {
         out.flush();
     }
  
+    void onAndarHacia(String playerID, Coordenada origen, Coordenada destino, Coordenada []ruta){
+        
+    }
+    
+    void onAtacar(String playerID, String objectID){
+        
+    }
+    
+    void onRecibirDano(String playerID,int dano){
+        
+    }
+    
+    void onLLegaDestino(String playerID,Coordenada coordenada){
+        
+    }
 }

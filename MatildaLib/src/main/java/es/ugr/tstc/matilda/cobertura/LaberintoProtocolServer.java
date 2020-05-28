@@ -1,6 +1,5 @@
 package es.ugr.tstc.matilda.cobertura;
 
-import es.ugr.tstc.matilda.laberinto.LaberintoServidor;
 import es.ugr.tstc.matilda.registrationservice.UserDataBase;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,7 +25,7 @@ import java.util.logging.Logger;
 public class LaberintoProtocolServer {
     
 
-    private CoberturaServer application;
+    private laberintoServer application;
     private List<LaberintoProtocolServerProcessor> processorList;
 
  
@@ -34,7 +33,7 @@ public class LaberintoProtocolServer {
                
                int puerto=9090;
                // Application LEvel part of the server:
-               CoberturaServer application=new CoberturaServer();
+               laberintoServer application=new laberintoServer();
                application.init();
                application.setRoom("Room00");
                
@@ -48,7 +47,7 @@ public class LaberintoProtocolServer {
  * @param puerto
  * @param application 
  */
-    public LaberintoProtocolServer(int puerto, CoberturaServer application) {
+    public LaberintoProtocolServer(int puerto, laberintoServer application) {
        
         this.application=application;
         application.setProtocolEngine(this);

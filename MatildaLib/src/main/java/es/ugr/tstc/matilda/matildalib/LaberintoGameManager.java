@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,8 +23,10 @@ import java.util.logging.Logger;
 public class LaberintoGameManager {
 
    
+
+   
     
-            enum ESTADOS {inicial, esperandoRegisterRequest};
+            enum ESTADOS {inicial, esperandoRegisterRequest, registrado};
             
             
     private MatildaLibClient matildaLib;
@@ -31,6 +34,8 @@ public class LaberintoGameManager {
     private BufferedReader in;
     private PrintWriter out;
 
+    ESTADOS estado=ESTADOS.inicial;
+    
     public LaberintoGameManager() {
         
     }
@@ -48,9 +53,9 @@ public class LaberintoGameManager {
             
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream());
-            
-
-            
+     
+            ReaderThread hebraLectora=new ReaderThread(in, this);
+            hebraLectora.start();
             
         } catch (IOException ex) {
             Logger.getLogger(LaberintoGameManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -64,9 +69,6 @@ public class LaberintoGameManager {
         private BufferedReader in;
         boolean salir=false;
         private LaberintoGameManager manager;
-        
-
-        ESTADOS estado=ESTADOS.inicial;
         
         public ReaderThread(BufferedReader in, LaberintoGameManager manager) {
             this.in=in;
@@ -82,6 +84,7 @@ public class LaberintoGameManager {
             do{
              
                  linea=in.readLine();
+                 System.out.println("GameManager: recibido "+linea);
                  
                  LaberintoMessage mensaje=new LaberintoMessage(linea);
              
@@ -89,10 +92,19 @@ public class LaberintoGameManager {
                      case inicial:
                          
                          break;
+                     case registrado:
+                         switch(mensaje.getType()){
+                             case mPlayerList:
+                                 manager.evPlayerList(mensaje.getPlayersList());
+                                 
+                                 break;
+                         }
+                         break;
                      case esperandoRegisterRequest:
                          
                          switch(mensaje.getType()){
                              case mJoinResponse:
+                                 estado=ESTADOS.registrado;
                                  manager.evJoinResponse(mensaje.getCode(), mensaje.getPlayerID());
                                  break;
                          }
@@ -125,9 +137,15 @@ public class LaberintoGameManager {
             out.print(mensaje.serialize());
             out.flush();
 
+            estado=ESTADOS.esperandoRegisterRequest;
             
             return error;
     }
+   
+    
+     private void evPlayerList(List<CharacterDescription> playersList) {
+         matildaLib.evPlayerList(playersList);
+     }
     
      private void evJoinResponse(LaberintoMessage.CODES code, String playerID) {
          switch(code){

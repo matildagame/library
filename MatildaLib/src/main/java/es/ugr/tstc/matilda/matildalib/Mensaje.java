@@ -5,8 +5,10 @@
  */
 package es.ugr.tstc.matilda.matildalib;
 
+import es.ugr.tstc.matilda.cobertura.CharacterDescription;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,14 +18,15 @@ import java.util.logging.Logger;
  */
 public class Mensaje {
 
-static final String SP=" ";
-static final String DEL=":";
-static final String DEL2=";";
-static final String DEL3="#";
-static final String ENDOL="\n";
+    static final String SP = " ";
+    static final String DEL = ":";
+    static final String DEL2 = ";";
+    static final String DEL3 = "#";
+    static final String ENDOL = "\n";
 
-static final String RegisterString="REGISTER";
-static final String RegisterReplyString="REGISTER_REPLY";
+    static final String RegisterString = "REGISTER";
+    static final String RegisterReplyString = "REGISTER_REPLY";
+    static final String PlayersListString = "PLAYER_LIST";
 
     private String username;
     private String room;
@@ -33,107 +36,146 @@ static final String RegisterReplyString="REGISTER_REPLY";
     private String game_server_address;
     private int game_server_port;
     private String playerID;
+    private List<CharacterDescription> playersList;
+
+    enum CODE {
+        OK, ERR
+    };
+    CODE code;
 
     void buildRegisterReply(String playerID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.playerID = playerID;
+        this.tipo = MessageType.REGISTER_REPLY;
+        this.code = CODE.OK;
     }
-    
-    enum ERROR {noError};
-    enum MessageType {invalidMessage,PLAYERS_LIST_UPDATE,START_MATCH,REGISTER_REQUEST, REGISTER_REPLY
-    }
-    
-    // Campos del mensaje:
-    MessageType tipo=MessageType.invalidMessage;
- 
 
-    private String contrasenia="+";
-    private String direccionServidorRegistro="locahost";
-    private int puertoServidorRegistro=9999;
-    
-    String servidor="localhost";
-    int puerto=9090;
-    
-    Mensaje(){
-        
+    void buildPlayersListMessage(List<CharacterDescription> playersList) {
+        tipo = MessageType.PLAYERS_LIST_UPDATE;
+        this.playersList = playersList;
+    }
+
+    enum ERROR {
+        noError
+    };
+
+    enum MessageType {
+        invalidMessage, PLAYERS_LIST_UPDATE, START_MATCH, REGISTER_REQUEST, REGISTER_REPLY
+    }
+
+    // Campos del mensaje:
+    MessageType tipo = MessageType.invalidMessage;
+
+    private String contrasenia = "+";
+    private String direccionServidorRegistro = "locahost";
+    private int puertoServidorRegistro = 9999;
+
+    String servidor = "localhost";
+    int puerto = 9090;
+
+    Mensaje() {
+
     }
 
     Mensaje(BufferedReader in) {
-        String mensajeBruto=leerMensaje(in);
-        
-        if (interpretaMensaje(mensajeBruto)!=ERROR.noError){
-            tipo=MessageType.invalidMessage;
+        String mensajeBruto = leerMensaje(in);
+
+        if (interpretaMensaje(mensajeBruto) != ERROR.noError) {
+            tipo = MessageType.invalidMessage;
         }
-    }
-    
-    private ERROR interpretaMensaje(String mensajeBruto) {
-        ERROR error=ERROR.noError;
-        
-        String[] campos = mensajeBruto.split(SP);
-        
-        // Si es la inicialización:
-        if(campos[0].compareTo(RegisterString)==0){
-            buildRegisterRequestMessage(campos);
-        } 
-        
-        return error;
-    }
-    
-    ERROR buildRegisterRequestMessage(String[] campos_){
-        ERROR error=ERROR.noError;
-        tipo=MessageType.REGISTER_REQUEST;
-        
-    String[] campos = campos_[1].split(DEL);
-        
-            username=campos[0];
-            room=campos[1];
-            mesh=campos[2];
-            body_texture=campos[3];
-            hair_texture=campos[4];
-            game_server_address=campos[5];
-            game_server_port=Integer.parseInt(campos[6]);
-            
-            return error;
     }
 
-    ERROR buildRegisterReplyMessage(String playerID){
-        ERROR error=ERROR.noError;
-        tipo=MessageType.REGISTER_REPLY;
-            
-          this.playerID=playerID;
-            
-            return error;
+    private ERROR interpretaMensaje(String mensajeBruto) {
+        ERROR error = ERROR.noError;
+
+        String[] campos = mensajeBruto.split(SP);
+
+        // Si es la inicialización:
+        if (campos[0].compareTo(RegisterString) == 0) {
+            buildRegisterRequestMessage(campos);
+        }
+
+        return error;
     }
-    
-    String serialize(){
-        String linea="";
-        
-        switch(getType()){
+
+    ERROR buildRegisterRequestMessage(String[] campos_) {
+        ERROR error = ERROR.noError;
+        tipo = MessageType.REGISTER_REQUEST;
+
+        String[] campos = campos_[1].split(DEL);
+
+        username = campos[0];
+        room = campos[1];
+        mesh = campos[2];
+        body_texture = campos[3];
+        hair_texture = campos[4];
+        game_server_address = campos[5];
+        game_server_port = Integer.parseInt(campos[6]);
+
+        return error;
+    }
+
+    ERROR buildRegisterReplyMessage(String playerID) {
+        ERROR error = ERROR.noError;
+        tipo = MessageType.REGISTER_REPLY;
+
+        this.playerID = playerID;
+
+        return error;
+    }
+
+    String serialize() {
+        String linea = "";
+
+        switch (getType()) {
             case REGISTER_REPLY:
-                linea=RegisterReplyString+SP+"OK"+SP+playerID+ENDOL;
+                linea = RegisterReplyString + SP + "OK" + SP + playerID + ENDOL;
+                break;
+            case PLAYERS_LIST_UPDATE:
+                linea = serializePlayersListUpdate(playersList);
                 break;
         }
-        
+
         return linea;
     }
-    
+
+    private String serializePlayersListUpdate(List<CharacterDescription> playersList) {
+        String linea = "";
+
+        linea = PlayersListString + SP + serializeCharacterDescription(playersList.get(0));
+
+        for (int i = 1; i < playersList.size(); i++) {
+            linea = linea + DEL + serializeCharacterDescription(playersList.get(i));
+        }
+
+        linea = linea + ENDOL;
+        return linea;
+    }
+
+    private String serializeCharacterDescription(CharacterDescription character) {
+        String linea = "";
+
+        linea = character.getPlayerID() + DEL2 + character.getName() + DEL2 + character.getCharacterMesh()
+                + DEL2 + character.getMainTexture() + DEL2 + character.getHairTexure();
+
+        return linea;
+    }
+
     private String leerMensaje(BufferedReader in) {
-        String mensaje=null;
-        
+        String mensaje = null;
+
         try {
             // suponemos mensajes orientados a líneas de texto:
-            mensaje=in.readLine();
+            mensaje = in.readLine();
             //System.out.println("> Raw: \""+mensaje+"\"");
-            
+
         } catch (IOException ex) {
             Logger.getLogger(Mensaje.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return mensaje;
     }
-    
-    
-    
-    MessageType getType(){
+
+    MessageType getType() {
         return tipo;
     }
 
@@ -240,5 +282,5 @@ static final String RegisterReplyString="REGISTER_REPLY";
     public void setPuerto(int puerto) {
         this.puerto = puerto;
     }
-   
+
 }

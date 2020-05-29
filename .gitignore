@@ -1,3 +1,5 @@
+# Java
+*.class
 
 # Godot-specific ignores
 .import/

@@ -1,6 +1,5 @@
 package es.ugr.tstc.matilda.cobertura;
 
-import es.ugr.tstc.matilda.registrationservice.UserDataBase;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

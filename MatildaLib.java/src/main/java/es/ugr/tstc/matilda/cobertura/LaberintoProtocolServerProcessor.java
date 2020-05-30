@@ -87,6 +87,8 @@ public class LaberintoProtocolServerProcessor extends Thread {
             socketConexion.close();
         } catch (IOException ex) {
             Logger.getLogger(LaberintoProtocolServerProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            
+            servidor.delPlayer(playerID);
         }
 
     }

@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 public class LaberintoProtocolServer {
     
 
-    private laberintoServer application;
+    private LaberintoApp application;
     private List<LaberintoProtocolServerProcessor> processorList;
 
  
@@ -32,7 +32,7 @@ public class LaberintoProtocolServer {
                
                int puerto=9090;
                // Application LEvel part of the server:
-               laberintoServer application=new laberintoServer();
+               LaberintoApp application=new LaberintoApp();
                application.init();
                application.setRoom("Room00");
                
@@ -46,7 +46,7 @@ public class LaberintoProtocolServer {
  * @param puerto
  * @param application 
  */
-    public LaberintoProtocolServer(int puerto, laberintoServer application) {
+    public LaberintoProtocolServer(int puerto, LaberintoApp application) {
        
         this.application=application;
         application.setProtocolEngine(this);
@@ -119,6 +119,10 @@ public class LaberintoProtocolServer {
         for(LaberintoProtocolServerProcessor thread:processorList){
             thread.addEvent(new Event(Event.EVENTS.evIniciarPartida,room));
         }
+    }
+
+    void delPlayer(String playerID) {
+        application.delPlayer(playerID);
     }
 
 }

@@ -28,6 +28,7 @@ public class MatildaLibClient {
            BufferedReader in=null;
         PrintWriter out=null;
         LaberintoGameManager laberintoGameManager=null;
+   Socket socket;
         
 
     void setLaberintoManager(LaberintoGameManager laberintoGameManager) {
@@ -93,7 +94,10 @@ public class MatildaLibClient {
 //    
     
     
-   
+    public MatildaLibClient(Socket socket) {
+      this.socket=socket;
+    }
+    
 
     public MatildaLibClient(int libPort) {
       this.libPort=libPort;
@@ -120,6 +124,11 @@ public class MatildaLibClient {
             serverSocket.close();
         } catch (IOException ex) {
             Logger.getLogger(MatildaLibClient.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                socket.close();
+            } catch (IOException ex1) {
+                Logger.getLogger(MatildaLibClient.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
         
         return error;
@@ -129,7 +138,7 @@ public class MatildaLibClient {
      * It processes the Matlib.gd Peer.
      * @param socket 
      */
-    private void crearProcesador(Socket socket) {
+    void crearProcesador(Socket socket) {
 
         boolean salir=false;
         int error=0;

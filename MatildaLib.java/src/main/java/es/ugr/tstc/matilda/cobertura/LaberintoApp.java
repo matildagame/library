@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * @author matilda
  */
-public class laberintoServer {
+public class LaberintoApp {
 
     // Hay que poner otra manera de decir que comience el juego... ¿Otro mensaje?
     // De momento, arranca cuando se llega a 3 jugadores esperando en la partida:
@@ -56,7 +56,7 @@ public class laberintoServer {
     }
 
     String generatePlayerID(String username, CharacterDescription characterDescription, String room) {
-        return username+"#"+room+"#"+(Math.round(Math.random()*50000));
+        return "Player"+(Math.round(Math.random()*50000));
     }
 
     int addPlayer(String playerID, CharacterDescription characterDescription) {
@@ -73,7 +73,7 @@ public class laberintoServer {
             ////////////////////////////////////
             //fix : comienza cuando hay n jugadores:
             //////////////////////////////////
-            if (playersList.size()==playersToStart){
+            if (playersList.size()>=playersToStart){
                 startMatch();
             }
             ////////////////////////////////////
@@ -150,7 +150,7 @@ public class laberintoServer {
     }
 
     private void initAvailablePlayersSpawnPosition() {
-        float[][] testPositions={{0,0,0},{10,0,0},{10,10,0},{0,20,0},{0,50,0},{40,20,0}};
+        float[][] testPositions={{-1.578f,0.0f,-18.31f},{-2.0f,0.0f,-18.31f},{0f,0f,-18f},{-3,0,-18},{0,0,-16},{0,0,-17}};
             
         availableSpawnPointsList=new ArrayList<float[]>();
         
@@ -158,5 +158,15 @@ public class laberintoServer {
             float[] vector = testPositions[i];
             availableSpawnPointsList.add(vector);
         }
+    }
+
+    void delPlayer(String playerID) {
+       if (playersList.get(playerID) == null) {
+            // Se añade a la lista.
+            playersList.remove(playerID);
+            
+             // Además, notifica la llegada de un nuevo jugador:
+             notifyPlayerListChange();
+       }
     }
 }

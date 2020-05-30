@@ -71,6 +71,8 @@ public class LaberintoMessage {
     static final String ENDOL = "\n";
     static final String DEL = ";";
     static final String DEL2 = ":";
+    static final String DEL3 = "#";
+    
     static final String SP = " ";
     private float[] coordinateOrigin;
     private float[] coordinateDestination;
@@ -324,7 +326,7 @@ public class LaberintoMessage {
     private float[] parseCoordinate(String coordinate_) {
         float[] vector = new float[3];
 
-        String[] numbers = coordinate_.split(DEL2);
+        String[] numbers = coordinate_.split(DEL3);
 
         for (int i = 0; i < numbers.length; i++) {
             vector[i] = Float.parseFloat(numbers[i]);
@@ -665,7 +667,7 @@ public class LaberintoMessage {
      * @return
      */
     private String serializeCoordinate(float[] coordinate) {
-        return coordinate[0] + DEL2 + coordinate[1] + DEL2 + coordinate[2];
+        return coordinate[0] + DEL3 + coordinate[1] + DEL3 + coordinate[2];
     }
 
     /**

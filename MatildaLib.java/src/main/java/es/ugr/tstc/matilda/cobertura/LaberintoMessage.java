@@ -45,6 +45,7 @@
  **************** */
 package es.ugr.tstc.matilda.cobertura;
 
+import es.ugr.tstc.matilda.matildalib.Coordenada;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,13 +78,14 @@ public class LaberintoMessage {
     private float[] coordinateOrigin;
     private float[] coordinateDestination;
     private Map<String, float[]> spawnPlayersList;
+    private boolean running;  
 
-  
+
 
     // Type identifier
     public enum TYPES {
         mInvalidMessage, mJoinRequest, mLeave, mStartMatch, mMovementUpdate, mFinishMatch,
-        mJoinResponse, mPlayerList
+        mJoinResponse, mPlayerList, mUpdateRoute
     };
     TYPES type = TYPES.mInvalidMessage;
 
@@ -95,7 +97,8 @@ public class LaberintoMessage {
     static final String mFinishMatchCommand = "FINISH";
     static final String mJoinResponseCommand = "JOINED";
     static final String mPlayerListCommand = "PLAYERS";
-
+    static final String mUpdateRouteCommand = "UPDATE_ROUTE";
+    
     // Error codes in response:
     public enum CODES {
         OKCode, ErrorCode
@@ -153,11 +156,35 @@ public class LaberintoMessage {
         } else if (campos[0].compareTo(mPlayerListCommand) == 0) {
             type = TYPES.mPlayerList;
             error = parseMPlayerList(campos);
+        } else if(campos[0].compareTo(mUpdateRouteCommand)==0){
+            type=TYPES.mUpdateRoute;
+            error=parseMUpdateRoute(campos);
         }
 
         return error;
     }
 
+    
+    /**
+     * 
+     * @param campos
+     * @return 
+     */
+     private int parseMUpdateRoute(String[] campos) {
+         int error=0;
+         
+         if(campos.length==4){
+             playerID=campos[1];
+             
+             coordinateOrigin=parseCoordinate(campos[2]);
+             
+             running=(campos[3].compareTo("1")==0);
+         } else {
+             error=-1;
+         }
+         
+         return error;
+     }
     /**
      *
      * @param campos
@@ -443,7 +470,15 @@ public class LaberintoMessage {
         this.coordinateOrigin = coordinateOrigin;
         this.coordinateDestination = coordinateDestination;
     }
-
+    
+    
+    public void buildMUpdateRoute(String playerID, Coordenada coordinate, boolean running) {
+        type = TYPES.mUpdateRoute;
+        this.playerID = playerID;
+        this.coordinateOrigin = coordinate.getArray();
+        this.running=running;
+    }
+    
     /**
      * !!!! Todo!!!!!!!
      */
@@ -478,6 +513,11 @@ public class LaberintoMessage {
      *
      * @return
      */
+    
+    public boolean getRunning(){
+        return running;
+    }
+    
     public String getUsername() {
         return username;
     }
@@ -603,6 +643,9 @@ public class LaberintoMessage {
             case mStartMatch:
                 packet = serializeMStartMatch();
                 break;
+            case mUpdateRoute:
+                packet=serializeMUpdateRoute();
+                break;
             case mInvalidMessage:
             default:
                 packet = null;
@@ -694,6 +737,13 @@ public class LaberintoMessage {
         return list;
     }
 
+    /**
+     * 
+     * @return 
+     */
+        private String serializeMUpdateRoute() {
+            return mUpdateRouteCommand+SP+playerID+SP+serializeCoordinate(coordinateOrigin)+SP+((running)?"1":"0");
+        }
     /**
      * mStartMatch = “START” SP room SP playerSpawnList ENDOL
      *

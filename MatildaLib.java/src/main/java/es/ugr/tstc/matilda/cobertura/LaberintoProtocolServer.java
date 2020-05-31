@@ -125,4 +125,13 @@ public class LaberintoProtocolServer {
         application.delPlayer(playerID);
     }
 
+    void updateRoute(String playerID, float[] coordinateOrigin, boolean running) {
+       
+        for(LaberintoProtocolServerProcessor thread:processorList){
+            thread.addEvent(new Event(Event.EVENTS.evActualizarRutas,playerID,coordinateOrigin,running));
+        }
+ 
+    }
+
+
 }

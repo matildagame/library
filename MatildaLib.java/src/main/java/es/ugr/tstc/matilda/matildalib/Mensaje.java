@@ -29,8 +29,9 @@ public class Mensaje {
     static final String RegisterString = "REGISTER";
     static final String RegisterReplyString = "REGISTER_REPLY";
     static final String PlayersListString = "PLAYER_LIST";
-    static final String StartMatchString="START_MATCH";
-    
+    static final String StartMatchString = "START_MATCH";
+    static final String UpdateRoute = "UPDATE_ROUTE";
+
     private String username;
     private String room;
     private String mesh;
@@ -41,22 +42,46 @@ public class Mensaje {
     private String playerID;
     private List<CharacterDescription> playersList;
     private Map<String, float[]> spawnPlayerList;
+    private boolean running;
+    private Coordenada coordinate;
 
- 
+    private ERROR parseUpdateRoute(String[] campos) {
+        ERROR error = ERROR.noError;
+
+        String[] camp = campos[1].split(DEL);
+
+        playerID = camp[0];
+        coordinate = parseCoordinate(camp[1]);
+        running = (camp[2].compareTo("1") == 0);
+
+        tipo = MessageType.UPDATE_ROUTE;
+
+        return error;
+    }
+
+    Coordenada parseCoordinate(String coordenada_) {
+        Coordenada coordenada = new Coordenada();
+
+        String[] co = coordenada_.split(DEL2);
+
+        coordenada.x = Float.parseFloat(co[0]);
+        coordenada.y = Float.parseFloat(co[1]);
+        coordenada.z = Float.parseFloat(co[2]);
+
+        return coordenada;
+    }
 
     enum CODE {
         OK, ERR
     };
     CODE code;
 
-   
-
     enum ERROR {
         noError
     };
 
     enum MessageType {
-        invalidMessage, PLAYERS_LIST_UPDATE, START_MATCH, REGISTER_REQUEST, REGISTER_REPLY
+        invalidMessage, PLAYERS_LIST_UPDATE, START_MATCH, REGISTER_REQUEST, REGISTER_REPLY, UPDATE_ROUTE
     }
 
     // Campos del mensaje:
@@ -89,7 +114,21 @@ public class Mensaje {
         // Si es la inicialización:
         if (campos[0].compareTo(RegisterString) == 0) {
             buildRegisterRequestMessage(campos);
+        } else if (campos[0].compareTo(UpdateRoute) == 0) {
+            parseUpdateRoute(campos);
         }
+
+        return error;
+    }
+
+    ERROR buildUpdateRoute(String playerID, float[] coordinateOrigin, boolean running) {
+        ERROR error = ERROR.noError;
+
+        this.playerID = playerID;
+        this.coordinate = new Coordenada(coordinateOrigin);
+        this.running = running;
+
+        tipo = MessageType.UPDATE_ROUTE;
 
         return error;
     }
@@ -119,32 +158,32 @@ public class Mensaje {
 
         return error;
     }
-    
+
     ERROR buildRegisterReply(String playerID) {
         ERROR error = ERROR.noError;
-        
+
         this.playerID = playerID;
         this.tipo = MessageType.REGISTER_REPLY;
         this.code = CODE.OK;
-        
-              return error;
+
+        return error;
     }
 
     ERROR buildPlayersListMessage(List<CharacterDescription> playersList) {
         ERROR error = ERROR.noError;
-        
+
         tipo = MessageType.PLAYERS_LIST_UPDATE;
         this.playersList = playersList;
-        
-              return error;
+
+        return error;
     }
-    
+
     ERROR buildStartMatchMessage(Map<String, float[]> spawnPlayersList) {
         ERROR error = ERROR.noError;
-        
-        tipo=MessageType.START_MATCH;
-        this.spawnPlayerList=spawnPlayersList;
-          return error;    
+
+        tipo = MessageType.START_MATCH;
+        this.spawnPlayerList = spawnPlayersList;
+        return error;
     }
 
     String serialize() {
@@ -158,35 +197,38 @@ public class Mensaje {
                 linea = serializePlayersListUpdate(playersList);
                 break;
             case START_MATCH:
-                linea=serializeSpawnPlayersList(spawnPlayerList);
+                linea = serializeSpawnPlayersList(spawnPlayerList);
+                break;
+            case UPDATE_ROUTE:
+                linea = serializeUpdateRoute(playerID, coordinate, running);
+                break;
         }
 
         return linea;
     }
-    
-   private String serializeSpawnPlayersList(Map<String, float[]> spawnPlayerList) {
-       String linea="";
-       
-       
+
+    private String serializeSpawnPlayersList(Map<String, float[]> spawnPlayerList) {
+        String linea = "";
+
         Set<String> playersID = spawnPlayerList.keySet();
-        
-        int i=0;
-        for(String playerID:playersID){
-           float[] coordenada = spawnPlayerList.get(playerID);
-            linea=linea+playerID+DEL2+coordenada[0]+DEL2+coordenada[1]+DEL2+coordenada[2];
-                    i++;
-                    if(i<playersID.size()){
-                        linea=linea+DEL;
-                    }
+
+        int i = 0;
+        for (String playerID : playersID) {
+            float[] coordenada = spawnPlayerList.get(playerID);
+            linea = linea + playerID + DEL2 + coordenada[0] + DEL2 + coordenada[1] + DEL2 + coordenada[2];
+            i++;
+            if (i < playersID.size()) {
+                linea = linea + DEL;
+            }
         }
-       
-       linea=StartMatchString+SP+ linea+ENDOL; //serializePositionDescription(spawnPlayerList);
-        
-       return linea;
-   }
+
+        linea = StartMatchString + SP + linea + ENDOL; //serializePositionDescription(spawnPlayerList);
+
+        return linea;
+    }
 
     private String serializePositionDescription(float[] get) {
-        return "";
+        return get[0]+DEL2+get[1]+DEL2+get[2];
     }
 
     private String serializePlayersListUpdate(List<CharacterDescription> playersList) {
@@ -207,6 +249,14 @@ public class Mensaje {
 
         linea = character.getPlayerID() + DEL2 + character.getName() + DEL2 + character.getCharacterMesh()
                 + DEL2 + character.getMainTexture() + DEL2 + character.getHairTexure();
+
+        return linea;
+    }
+
+    private String serializeUpdateRoute(String playerID, Coordenada coordinate, boolean running) {
+        String linea = "";
+
+        linea = UpdateRoute + SP + playerID + DEL + serializePositionDescription(coordinate.getArray()) + DEL + ((running) ? "1" : "0") + ENDOL;
 
         return linea;
     }
@@ -332,6 +382,30 @@ public class Mensaje {
 
     public void setPuerto(int puerto) {
         this.puerto = puerto;
+    }
+
+    public String getPlayerID() {
+        return playerID;
+    }
+
+    public void setPlayerID(String playerID) {
+        this.playerID = playerID;
+    }
+
+    public boolean getRunning() {
+        return running;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    public Coordenada getCoordinate() {
+        return coordinate;
+    }
+
+    public void setCoordinate(Coordenada coordinate) {
+        this.coordinate = coordinate;
     }
 
 }

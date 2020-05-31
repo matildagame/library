@@ -12,6 +12,16 @@ package es.ugr.tstc.matilda.matildalib;
 public class Coordenada {
     float x,y,z;
 
+    public Coordenada(){
+        
+    }
+    
+    public Coordenada(float[] coordinate) {
+        x=coordinate[0];
+        y=coordinate[1];
+        z=coordinate[2];   
+    }
+
     public float getX() {
         return x;
     }
@@ -34,6 +44,11 @@ public class Coordenada {
 
     public void setZ(float z) {
         this.z = z;
+    }
+
+   public float[] getArray() {
+        float []coord={x,y,z};          
+        return coord;
     }
     
 }

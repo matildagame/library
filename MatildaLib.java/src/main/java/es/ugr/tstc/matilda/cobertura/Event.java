@@ -15,6 +15,9 @@ public class Event {
 
     private Map<String, CharacterDescription> playersList;
     private String room;
+    private String playerID;
+    private float[] coordinate;
+    private boolean running;
 
     String show() {
        return " > "+eventType;
@@ -26,7 +29,7 @@ public class Event {
     TYPE eventType;
 
     enum EVENTS {
-        evCambiarLista, evIniciarPartida, evFinPartida
+        evCambiarLista, evIniciarPartida, evFinPartida, evActualizarRutas
     };
     EVENTS eventSubtype;
 
@@ -35,6 +38,14 @@ public class Event {
     Event(LaberintoMessage message) {
         eventType = TYPE.message;
         this.message = message;
+    }
+
+   Event(EVENTS eventSubtype,String playerID,float [] coordinateOrigin,boolean running){
+      eventType=TYPE.event;
+       this.eventSubtype=eventSubtype;
+       this.playerID=playerID;
+       this.coordinate=coordinateOrigin;
+       this.running=running;
     }
     
     Event(EVENTS eventSubtype, Map<String, CharacterDescription> playersList) {
@@ -64,5 +75,37 @@ public class Event {
 
     EVENTS getSubtype(){
         return eventSubtype;
+    }
+
+    public String getRoom() {
+        return room;
+    }
+
+    public void setRoom(String room) {
+        this.room = room;
+    }
+
+    public String getPlayerID() {
+        return playerID;
+    }
+
+    public void setPlayerID(String playerID) {
+        this.playerID = playerID;
+    }
+
+    public float[] getCoordinate() {
+        return coordinate;
+    }
+
+    public void setCoordinate(float[] coordinate) {
+        this.coordinate = coordinate;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
     }
 }

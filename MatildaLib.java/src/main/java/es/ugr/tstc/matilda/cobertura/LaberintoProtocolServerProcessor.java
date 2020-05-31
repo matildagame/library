@@ -5,6 +5,7 @@
  */
 package es.ugr.tstc.matilda.cobertura;
 
+import es.ugr.tstc.matilda.matildalib.Coordenada;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -231,7 +232,39 @@ public class LaberintoProtocolServerProcessor extends Thread {
     }
 
     private void procesarEstadoEnPartida(Event event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+          if (event.isMessage()) {
+            // Si es un mensaje:
+            LaberintoMessage mensaje = event.getMessage();
+
+            switch (mensaje.getType()) {
+                case mLeave:
+                    servidor.removePlayer(mensaje.getUsername(), mensaje.getRoom());
+                    estado = ESTADOS.fin;
+                    break;
+                case mUpdateRoute:
+                    servidor.updateRoute(mensaje.getPlayerID(),mensaje.getCoordinateOrigin(),mensaje.getRunning());
+                    break;
+                default:
+                    error();
+                    break;
+            }
+        } else {
+            // Si es un evento:
+            switch (event.getSubtype()) {
+                case evActualizarRutas:
+                    enviarMUpdateRoute(event.getPlayerID(),event.getCoordinate(),event.isRunning());
+                    break;
+            }
+          }
+    }
+    
+    private void enviarMUpdateRoute(String playerID, float[] coordinate, boolean running) {
+        Coordenada coordenada=new Coordenada(coordinate);
+        
+          LaberintoMessage message = new LaberintoMessage();
+        message.buildMUpdateRoute(playerID, coordenada, running);
+        out.print(message.serialize());
+        out.flush();
     }
 
     private void enviarMJoinResponseErrRoom() {

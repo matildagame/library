@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  */
 public class LaberintoGameManager {
 
-
+ 
 
    
             enum ESTADOS {inicial, esperandoRegisterRequest, registrado};
@@ -100,6 +100,9 @@ public class LaberintoGameManager {
                              case mStartMatch:
                                  manager.evStartMatch(mensaje.getSpawnPlayersList());
                                  break;
+                             case mUpdateRoute:
+                                 manager.evUpdateRoute(mensaje.getPlayerID(),mensaje.getCoordinateOrigin(),mensaje.getRunning());
+                                 break;
                          }
                          break;
                      case esperandoRegisterRequest:
@@ -131,7 +134,7 @@ public class LaberintoGameManager {
     int register(String username, String room, String mesh, String bodyTexture, String hairTexture) {
         int error=0;
         
-        // Enviamos el mensaje, y esperamos la respuesta:
+        // Enviamos el mensaje
           LaberintoMessage mensaje=new LaberintoMessage();
             
             mensaje.buildMJoinRequest(username, 
@@ -143,6 +146,20 @@ public class LaberintoGameManager {
             
             return error;
     }
+    
+     int updatePlayerRoute(String playerID, Coordenada coordinate, boolean running) {
+         int error=0;
+         
+           LaberintoMessage mensaje=new LaberintoMessage();
+           
+           mensaje.buildMUpdateRoute(playerID,coordinate,running);
+          out.print(mensaje.serialize());
+            out.flush();
+
+         return error;
+     }
+
+     
    
     
      private void evPlayerList(List<CharacterDescription> playersList) {
@@ -163,5 +180,9 @@ public class LaberintoGameManager {
          private void evStartMatch(Map<String, float[]> spawnPlayersList) {
         matildaLib.evStartMatch(spawnPlayersList);
     }
+         
+            private void evUpdateRoute(String playerID, float[] coordinateOrigin, boolean running) {
+     matildaLib.evUpdateRoute(playerID,coordinateOrigin,running);
+            }
     
 }

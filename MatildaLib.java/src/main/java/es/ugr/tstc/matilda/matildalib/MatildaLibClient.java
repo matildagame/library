@@ -43,7 +43,9 @@ public class MatildaLibClient {
     public void evJoinResponseOk(String playerID) {
         Mensaje mensaje=new Mensaje();
         mensaje.buildRegisterReplyMessage(playerID);
+        estado=Estados.registrado;
         enviarMensaje(mensaje.serialize());
+        
     }
 
     public void evJoinResponseErr() {
@@ -59,6 +61,12 @@ public class MatildaLibClient {
     void evStartMatch(Map<String, float[]> spawnPlayersList) {
         Mensaje mensaje=new Mensaje();
         mensaje.buildStartMatchMessage(spawnPlayersList);
+        enviarMensaje(mensaje.serialize());
+    }
+
+    void evUpdateRoute(String playerID, float[] coordinateOrigin, boolean running) {
+          Mensaje mensaje=new Mensaje();
+        mensaje.buildUpdateRoute(playerID,coordinateOrigin,running);
         enviarMensaje(mensaje.serialize());
     }
     
@@ -155,37 +163,69 @@ public class MatildaLibClient {
                 Mensaje mensaje=new Mensaje(in);
                 
                 System.out.println("> Recibido mensaje Tipo: "+mensaje.getType());
-                
-                switch(estado){
-                    case inicial:
-                       
-                        break;
-                    case inicializado:
-        
-                        switch(mensaje.getType()){
-                            case REGISTER_REQUEST:
-                                if(laberintoGameManager.startSession(mensaje.getGameServerAddress(), mensaje.getGameServerPort())==0){
-                                    if(laberintoGameManager.register(mensaje.getUsername(), mensaje.getRoom(),mensaje.getMesh(),mensaje.getBodyTexture(),mensaje.getHairTexture())==0){
-                                      estado=Estados.esperandoRespuestaRegistro;
-                                    }
-                                } else {
-                                    error();
-                                }
-                                
-                                break;
-                            default:
-                                error();
-                                break;
-               
+
+                switch (mensaje.getType()) {
+                    case REGISTER_REQUEST:
+                        if (laberintoGameManager.startSession(mensaje.getGameServerAddress(), mensaje.getGameServerPort()) == 0) {
+                            if (laberintoGameManager.register(mensaje.getUsername(), mensaje.getRoom(), mensaje.getMesh(), mensaje.getBodyTexture(), mensaje.getHairTexture()) == 0) {
+                                estado = Estados.esperandoRespuestaRegistro;
+                            }
+                        } else {
+                            error();
                         }
-//                          if (mensaje.getType()==Mensaje.MessageType.libraryChatMessage){
-//                            System.out.println("Chat > "+mensaje.getMessage());
-//                    
-//                         enviarMensaje(mensaje.getMessage());
-//                }
-                     
+
+                        break;
+                    case UPDATE_ROUTE:
+                        laberintoGameManager.updatePlayerRoute(mensaje.getPlayerID(), mensaje.getCoordinate(), mensaje.getRunning());
+                        break;
+                    default:
+                        error();
                         break;
                 }
+                // Fuera estados del protocolo... es la comunicaicón más sencilla: rpc stateless...
+                
+//                switch(estado){
+//                    case inicial:
+//                       
+//                        break;
+//                    case inicializado:
+//        
+//                        switch(mensaje.getType()){
+//                            case REGISTER_REQUEST:
+//                                if(laberintoGameManager.startSession(mensaje.getGameServerAddress(), mensaje.getGameServerPort())==0){
+//                                    if(laberintoGameManager.register(mensaje.getUsername(), mensaje.getRoom(),mensaje.getMesh(),mensaje.getBodyTexture(),mensaje.getHairTexture())==0){
+//                                      estado=Estados.esperandoRespuestaRegistro;
+//                                    }
+//                                } else {
+//                                    error();
+//                                }
+//                                
+//                                break;
+//                         
+//                            default:
+//                                error();
+//                                break;
+//               
+//                        }
+//                        break;
+//                    case registrado:
+//                         switch(mensaje.getType()){
+//                            case UPDATE_ROUTE:
+//                                laberintoGameManager.updatePlayerRoute(mensaje.getPlayerID(),mensaje.getCoordinate(),mensaje.getRunning());
+//                                break;
+//                            default:
+//                                error();
+//                                break;
+//               
+//                        }
+////                          if (mensaje.getType()==Mensaje.MessageType.libraryChatMessage){
+////                            System.out.println("Chat > "+mensaje.getMessage());
+////                    
+////                         enviarMensaje(mensaje.getMessage());
+////                }
+//                     
+//                        break;
+//                }
                 
             } while(!salir);
             

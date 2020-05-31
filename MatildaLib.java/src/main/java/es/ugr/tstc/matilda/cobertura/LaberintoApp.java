@@ -5,11 +5,14 @@
  */
 package es.ugr.tstc.matilda.cobertura;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -31,6 +34,7 @@ public class LaberintoApp {
     List<float[]> availableSpawnPointsList;
     
     LaberintoProtocolServer coberturaProtocolServer;
+    private LaberintoAppGUI gui;
     
     void init(){
         playersList=new HashMap<String,CharacterDescription>();
@@ -41,6 +45,16 @@ public class LaberintoApp {
         initPlayersSpawnPositionList();
         initAvailablePlayersSpawnPosition();
         
+//        LaberintoApp app = this;
+//
+//            /* Create and display the form */
+//            java.awt.EventQueue.invokeLater(new Runnable() {
+//                public void run() {
+//                    gui=new LaberintoAppGUI(app);
+//                    new LaberintoAppGUI().setVisible(true);
+//                }
+//            });
+
     }
     
     boolean existeUsuario(String username) {
@@ -69,7 +83,8 @@ public class LaberintoApp {
             
              // Además, notifica la llegada de un nuevo jugador:
              notifyPlayerListChange();
-        
+             notifyPlayerListChangeGUI();
+             
             ////////////////////////////////////
             //fix : comienza cuando hay n jugadores:
             //////////////////////////////////
@@ -134,7 +149,7 @@ public class LaberintoApp {
         this.coberturaProtocolServer=coberturaProtocolServer;
     }
 
-    private void startMatch() {
+    public void startMatch() {
         playersSpawnPositionList.clear();
         
         // let's assign the available positions:
@@ -168,5 +183,9 @@ public class LaberintoApp {
              // Además, notifica la llegada de un nuevo jugador:
              notifyPlayerListChange();
        }
+    }
+
+    private void notifyPlayerListChangeGUI() {
+       // gui.notifyPlayerListChange(playersList);
     }
 }

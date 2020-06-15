@@ -25,7 +25,7 @@
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
-  <component name="RunManager" selected="Application.MatildaLibClientSharedLauncher">
+  <component name="RunManager" selected="Application.LaberintoProtocolServer">
     <configuration name="LaberintoAppGUI" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="es.ugr.tstc.matilda.cobertura.LaberintoAppGUI" />
       <module name="MatildaLib3" />
@@ -109,29 +109,29 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="519" y="167" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1591602627245" />
-    <state width="1493" height="210" key="GridCell.Tab.0.bottom" timestamp="1591964560382">
+    <state width="1493" height="210" key="GridCell.Tab.0.bottom" timestamp="1592214688140">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1591964560382" />
-    <state width="1493" height="210" key="GridCell.Tab.0.center" timestamp="1591964560382">
+    <state width="1493" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1592214688140" />
+    <state width="1493" height="210" key="GridCell.Tab.0.center" timestamp="1592214688140">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="210" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1591964560382" />
-    <state width="1493" height="210" key="GridCell.Tab.0.left" timestamp="1591964560382">
+    <state width="1493" height="210" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1592214688140" />
+    <state width="1493" height="210" key="GridCell.Tab.0.left" timestamp="1592214688140">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="210" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1591964560382" />
-    <state width="1493" height="210" key="GridCell.Tab.0.right" timestamp="1591964560382">
+    <state width="1493" height="210" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1592214688140" />
+    <state width="1493" height="210" key="GridCell.Tab.0.right" timestamp="1592214688140">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1591964560382" />
+    <state width="1493" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1592214688140" />
     <state x="219" y="0" key="SettingsEditor" timestamp="1591602630362">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="219" y="0" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1591602630362" />
-    <state x="465" y="236" key="com.intellij.ide.util.TipDialog" timestamp="1591951936399">
+    <state x="465" y="236" key="com.intellij.ide.util.TipDialog" timestamp="1592210225686">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="465" y="236" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1591951936399" />
+    <state x="465" y="236" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1592210225686" />
   </component>
 </project>
